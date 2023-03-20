@@ -1,0 +1,189 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MFA_AuthenticationTest</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">Tests</a>
+</div>
+
+<h1>Coverage Summary for Class: MFA_AuthenticationTest (Tests)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MFA_AuthenticationTest</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93.1%
+  </span>
+  <span class="absValue">
+    (27/29)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package Tests;
+&nbsp;
+&nbsp;import com.example.loginmfa.Authentication.MFA_Authentication;
+&nbsp;import com.example.loginmfa.Student.UoB_Student;
+&nbsp;import javafx.scene.paint.Color;
+&nbsp;import javafx.scene.text.Text;
+&nbsp;import junit.framework.TestCase;
+&nbsp;
+&nbsp;import javax.mail.MessagingException;
+&nbsp;
+<b class="fc">&nbsp;public class MFA_AuthenticationTest extends TestCase {</b>
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Attributes for testing
+&nbsp;     */
+<b class="fc">&nbsp;    UoB_Student testStudent = new UoB_Student(&quot;mzmahmo2@bradford.ac.uk&quot;,</b>
+&nbsp;            &quot;+447592309062&quot;,
+&nbsp;            &quot;test&quot;);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Test that the method returns a 6-digit MFA code
+&nbsp;     * @throws Exception errors
+&nbsp;     */
+&nbsp;    public void testSendSMS_returnsSixDigitCode() throws Exception {
+<b class="fc">&nbsp;        MFA_Authentication authentication = new MFA_Authentication();</b>
+<b class="fc">&nbsp;        String code = authentication.sendSMS(testStudent.getPhoneNumber(), new Text());</b>
+&nbsp;        // Assertions
+<b class="fc">&nbsp;        assertEquals(6, code.length());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Test that the method sends an SMS message
+&nbsp;     * @throws Exception errors
+&nbsp;     */
+&nbsp;    public void testSendSMS_sendsMessage() throws Exception {
+<b class="fc">&nbsp;        MFA_Authentication authentication = new MFA_Authentication();</b>
+<b class="fc">&nbsp;        Text actionTarget = new Text();</b>
+<b class="fc">&nbsp;        String code = authentication.sendSMS(testStudent.getPhoneNumber(), actionTarget);</b>
+&nbsp;        // Assertions
+<b class="fc">&nbsp;        assertEquals(testStudent.getPhoneNumber(), &quot;+447592309062&quot;);</b>
+<b class="fc">&nbsp;        assertNotNull(code);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Test that the method handles errors when sending an SMS message
+&nbsp;     * @throws Exception errors
+&nbsp;     */
+&nbsp;    public void testSendSMS_handlesErrors() throws Exception {
+<b class="fc">&nbsp;        MFA_Authentication authentication = new MFA_Authentication();</b>
+<b class="fc">&nbsp;        Text actionTarget = new Text();</b>
+<b class="fc">&nbsp;        String code = authentication.sendSMS(&quot;invalidPhoneNumber&quot;, actionTarget);</b>
+&nbsp;        // Assertions
+<b class="fc">&nbsp;        assertEquals(&quot;Failed to send SMS MFA code.&quot;, actionTarget.getText());</b>
+<b class="fc">&nbsp;        assertEquals(Color.RED, actionTarget.getFill());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Test sending a valid email and code 6 digit
+&nbsp;     * @throws Exception errors
+&nbsp;     */
+&nbsp;    public void testSendEmail_valid() throws Exception {
+<b class="fc">&nbsp;        MFA_Authentication authentication = new MFA_Authentication();</b>
+<b class="fc">&nbsp;        Text action_target = new Text();</b>
+<b class="fc">&nbsp;        String result = authentication.sendEmail(testStudent.getEmail(), action_target);</b>
+<b class="fc">&nbsp;        assertEquals(6, result.length());  // Check that the email code is 6 digits</b>
+<b class="fc">&nbsp;        assertEquals(&quot;Email MFA code sent.&quot;, action_target.getText());</b>
+<b class="fc">&nbsp;        assertEquals(Color.GREEN, action_target.getFill());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Test sending an email with an invalid email address
+&nbsp;     * @throws Exception errors
+&nbsp;     */
+&nbsp;    public void testSendEmail_invalidAddress() throws Exception {
+<b class="fc">&nbsp;        MFA_Authentication authentication = new MFA_Authentication();</b>
+<b class="fc">&nbsp;        String email = &quot;invalid-email&quot;;</b>
+<b class="fc">&nbsp;        Text action_target = new Text();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            authentication.sendEmail(email, action_target);</b>
+<b class="nc">&nbsp;            fail(&quot;Expected MessagingException was not thrown.&quot;);</b>
+<b class="fc">&nbsp;        } catch (MessagingException e) {</b>
+<b class="fc">&nbsp;            assertEquals(&quot;Invalid Addresses&quot;, e.getMessage());</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-19 20:23</div>
+</div>
+</body>
+</html>

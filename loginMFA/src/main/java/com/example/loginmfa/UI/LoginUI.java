@@ -1,12 +1,13 @@
-package com.example.loginmfa;
+package com.example.loginmfa.UI;
 
-import com.example.loginmfa.Authentication.SMS_MFA;
+import com.example.loginmfa.Authentication.MFA_Authentication;
 import com.example.loginmfa.Service.LoginService;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -15,6 +16,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 
 public class LoginUI extends Application {
@@ -23,23 +25,22 @@ public class LoginUI extends Application {
      * Attributes
      */
     private ToggleGroup mfaOptions;
-
     private GridPane grid = new GridPane();
     private Text scenetitle = new Text("MFA Login");
     private Label email = new Label("Email:");
     private Label pw = new Label("Password:");
-    private Label otpLabel = new Label("One-Time Password:");
     private TextField emailField = new TextField();
     private PasswordField pwBox = new PasswordField();
-    private TextField otpField = new TextField();
     private Button Login_btn = new Button("Sign in");
     private Button Clear_btn = new Button("Clear");
     final Text actiontarget = new Text();
-    private LoginService login = new LoginService(new SMS_MFA());
-
+    private LoginService login = new LoginService(new MFA_Authentication());
+    private RadioButton smsOption = new RadioButton("SMS");
+    BorderPane borderPane = new BorderPane();
 
     /**
-     * Login MFA UI
+     *
+     * Login MFA staging method, to initialise all the components and methods in the code.
      *
      * @param stage to display the stage
      * @throws IOException file errors
@@ -47,14 +48,15 @@ public class LoginUI extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        // Method calls
+        // Methods
         createLoginForm();
         actionEvents();
 
         // Add the scene
-        Scene scene = new Scene(grid, 400, 275);
+        Scene scene = new Scene(borderPane, 400, 300);
         stage.setScene(scene);
         stage.setTitle("Login MFA System");
+        stage.setResizable(false);
         stage.show();
     }
 
@@ -62,6 +64,11 @@ public class LoginUI extends Application {
      * Creates the layout and appearance of the login form
      */
     public void createLoginForm() {
+        // Add a padding and a border to the BorderPane
+        borderPane.setCenter(grid);
+        borderPane.setPadding(new Insets(10));
+        borderPane.setStyle("-fx-border-color: black; -fx-border-width: 10px;");
+
         // Create the login form
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -83,12 +90,7 @@ public class LoginUI extends Application {
         grid.add(pw, 0, 2);
         grid.add(pwBox, 1, 2);
 
-        // Add the OTP label and field
-        otpLabel.setStyle("-fx-font-weight: bold;");
-        grid.add(otpLabel, 0, 3);
-        grid.add(otpField, 1, 3);
-
-        // Add the login and clear button
+        // Add the login button
         Login_btn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
@@ -98,14 +100,18 @@ public class LoginUI extends Application {
 
         // Add the error message text
         actiontarget.setFill(Color.RED);
-        grid.add(actiontarget, 1, 5);
+        grid.add(actiontarget, 1, 6);
 
-        // Add a handler for the OTP field to limit its input to 6 digits
-        otpField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d{0,6}")) {
-                otpField.setText(oldValue);
-            }
-        });
+        // Add the MFA options
+        mfaOptions = new ToggleGroup();
+        smsOption.setToggleGroup(mfaOptions);
+        smsOption.setSelected(true);
+        RadioButton emailOption = new RadioButton("Email");
+        emailOption.setToggleGroup(mfaOptions);
+        HBox hbMfa = new HBox(10);
+        hbMfa.setAlignment(Pos.CENTER_LEFT);
+        hbMfa.getChildren().addAll(new Label("MFA Method:"), smsOption, emailOption);
+        grid.add(hbMfa, 0, 3, 2, 1);
     }
 
     /**
@@ -113,7 +119,13 @@ public class LoginUI extends Application {
      */
     public void actionEvents() {
         Login_btn.setOnAction(e -> {
-            login.Login(e, actiontarget, emailField.getText(), pwBox.getText());
+            RadioButton selectedOption = (RadioButton) mfaOptions.getSelectedToggle();
+            try {
+                login.Login(e, actiontarget, selectedOption.getText(), emailField.getText(), pwBox.getText(), "+447592309062");
+
+            } catch (MessagingException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         Clear_btn.setOnAction(e -> {
@@ -122,7 +134,9 @@ public class LoginUI extends Application {
     }
 
     /**
-     * launching application
+     *
+     * Launching application
+     *
      * @param args passing
      */
     public static void main(String[] args) {
