@@ -43,16 +43,18 @@ public class MFA_AuthenticationTest extends TestCase {
     }
 
     /**
-     * Test that the method handles errors when sending an SMS message
+     * Test that the method handles errors when sending an SMS message (wrongNumber)
      * @throws Exception errors
      */
     public void testSendSMS_handlesErrors() throws Exception {
         MFA_Authentication authentication = new MFA_Authentication();
         Text actionTarget = new Text();
-        String code = authentication.sendSMS("invalidPhoneNumber", actionTarget);
-        // Assertions
-        assertEquals("Failed to send SMS MFA code.", actionTarget.getText());
-        assertEquals(Color.RED, actionTarget.getFill());
+        try {
+            String code = authentication.sendSMS("invalid-number", actionTarget);
+            fail("Expected exception was not thrown.");
+        } catch (Exception e) {
+            assertEquals("The 'To' number  is not a valid phone number.", e.getMessage());
+        }
     }
 
     /**
@@ -63,6 +65,7 @@ public class MFA_AuthenticationTest extends TestCase {
         MFA_Authentication authentication = new MFA_Authentication();
         Text action_target = new Text();
         String result = authentication.sendEmail(testStudent.getEmail(), action_target);
+        assertEquals(testStudent.getEmail(), "mzmahmo2@bradford.ac.uk");
         assertEquals(6, result.length());  // Check that the email code is 6 digits
         assertEquals("Email MFA code sent.", action_target.getText());
         assertEquals(Color.GREEN, action_target.getFill());

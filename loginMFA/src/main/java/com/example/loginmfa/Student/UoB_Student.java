@@ -2,7 +2,6 @@ package com.example.loginmfa.Student;
 
 public class UoB_Student {
 
-
     /**
      * Attributes
      */
@@ -12,7 +11,7 @@ public class UoB_Student {
 
     /**
      *
-     * Construct a student object
+     * Construct a student object.
      *
      * @param email students email address
      * @param phoneNumber students phone number

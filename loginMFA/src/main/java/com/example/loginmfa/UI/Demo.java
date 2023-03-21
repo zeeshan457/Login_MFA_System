@@ -4,9 +4,7 @@ import javafx.application.Application;
 
 /**
  *
- *
- *
- * This  system allows UoB students to log in and authenticate their login using MFA options like SMS or email. Having
+ * This system allows UoB students to log in and authenticate their login using MFA options like SMS or email. Having
  * MFA authentication will prevent unauthorised access to students accounts.
  * <p>
  * The system uses strategy pattern to quickly add MFA authentication, and the system is using a 3 tier architecture to
