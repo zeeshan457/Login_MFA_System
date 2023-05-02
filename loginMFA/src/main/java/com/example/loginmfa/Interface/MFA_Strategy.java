@@ -2,7 +2,7 @@ package com.example.loginmfa.Interface;
 
 
 /**
- * Strategies
+ * MFA Strategies
  */
 public interface MFA_Strategy {
     public Boolean SMS_Strategy(String phoneNumber);

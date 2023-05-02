@@ -19,6 +19,8 @@ import javafx.stage.Stage;
 import javax.mail.MessagingException;
 import java.io.IOException;
 
+import static javafx.application.Application.launch;
+
 public class LoginUI extends Application {
 
     /**
@@ -26,6 +28,7 @@ public class LoginUI extends Application {
      */
     private ToggleGroup mfaOptions;
     private GridPane grid = new GridPane();
+    private Stage stage = new Stage();
     private Text scenetitle = new Text("MFA Login");
     private Label email = new Label("Email:");
     private Label pw = new Label("Password:");
@@ -34,9 +37,18 @@ public class LoginUI extends Application {
     private Button Login_btn = new Button("Sign in");
     private Button Clear_btn = new Button("Clear");
     final Text actiontarget = new Text();
-    private LoginService login = new LoginService(new MFA_Authentication());
+    private LoginService login = new LoginService();
+
     private RadioButton smsOption = new RadioButton("SMS");
     BorderPane borderPane = new BorderPane();
+
+    /**
+     * Constructor, injecting MFA
+     *
+     * @param mfa
+     */
+//    public LoginUI() {
+//    }
 
     /**
      *
@@ -64,6 +76,7 @@ public class LoginUI extends Application {
      * Creates the layout and appearance of the login form
      */
     public void createLoginForm() {
+
         // Add a padding and a border to the BorderPane
         borderPane.setCenter(grid);
         borderPane.setPadding(new Insets(10));
@@ -142,5 +155,4 @@ public class LoginUI extends Application {
     public static void main(String[] args) {
         launch();
     }
-
 }

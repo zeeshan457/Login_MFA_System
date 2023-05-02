@@ -27,11 +27,9 @@ public class MFA_Authentication implements MFA_Strategy {
         String code = String.valueOf((int)(Math.random() * (999999 - 100000 + 1) + 100000));
 
         if (SMS_Strategy(phoneNumber)) {
-            action_target.setFill(Color.RED);
-            action_target.setText("Failed to send SMS MFA code.");
             // Initialize the Twilio API
             String accountSid = "AC40fb3d309ab3b483ce155e7b35a3af17";
-            String authToken = "";
+            String authToken = "19f11eaec2828909c3c87dca4927e594";
             Twilio.init(accountSid, authToken);
 
             action_target.setFill(Color.GREEN);
@@ -103,11 +101,25 @@ public class MFA_Authentication implements MFA_Strategy {
         return emailCode;
     }
 
+    /**
+     *
+     * Implementing strategy from interface
+     *
+     * @param phoneNumber users phoneNumber
+     * @return true
+     */
     @Override
     public Boolean SMS_Strategy(String phoneNumber) {
         return true;
     }
 
+    /**
+     *
+     * Implementing strategy from interface
+     *
+     * @param email users email
+     * @return true
+     */
     @Override
     public Boolean Email_Strategy(String email) {
         return true;

@@ -1,6 +1,7 @@
 package com.example.loginmfa.Service;
 
 import com.example.loginmfa.Authentication.MFA_Authentication;
+import com.example.loginmfa.Dialog.createDialog;
 import com.example.loginmfa.Student.UoB_Student;
 import javafx.event.ActionEvent;
 import javafx.scene.control.TextField;
@@ -9,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Optional;
 
 
@@ -18,6 +20,7 @@ public class LoginService {
      * Attributes
      */
     private MFA_Authentication MFA = new MFA_Authentication();
+    private createDialog dialog = new createDialog();
 
     // Declaring student object
     private UoB_Student example_student = new UoB_Student
@@ -28,8 +31,7 @@ public class LoginService {
     /**
      * Constructor, injecting MFA
      */
-    public LoginService(MFA_Authentication mfa) {
-        this.MFA = mfa;
+    public LoginService() {
     }
 
     /**
@@ -53,51 +55,97 @@ public class LoginService {
                 phoneNumber.equals(example_student.getPhoneNumber())) {
 
     //============================================================================================//
-    //======================================= SMS section ========================================//
+    //================================== Windows / Android section ===============================//
     //============================================================================================//
 
-            // Send the MFA code via the selected option
-            if (option.equals("SMS")) {
+            TextInputDialog androidDialog = dialog.createWindowsDialog();
+            Optional<String> resultPlatform = androidDialog.showAndWait();
+            String platform = resultPlatform.orElse("");
+            if (platform.equals("1")) {
+                // Send the MFA code via the selected option
+                if (option.equals("SMS")) {
 
-                // Calling SMS Authentication
-                String SMScode = MFA.sendSMS(example_student.getPhoneNumber(), action_target);
+                    // Calling SMS Authentication
+                    String SMScode = MFA.sendSMS(example_student.getPhoneNumber(), action_target);
 
-                // Prompt the user to enter the MFA code
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("SMS Authentication");
-                dialog.setHeaderText("Enter the 6-digit code sent to your " + option + ": " + phoneNumber);
-                dialog.setContentText("Code:");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent() && result.get().equals(SMScode)) {
-                    action_target.setFill(Color.GREEN);
-                    action_target.setText("MFA Authorised.");
-                } else {
-                    action_target.setFill(Color.RED);
-                    action_target.setText("Incorrect MFA code.");
+                    // Prompt the user to enter the MFA code
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("SMS Authentication");
+                    dialog.setHeaderText("Enter the 6-digit code sent to your " + option + ": " + phoneNumber);
+                    dialog.setContentText("Code:");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent() && result.get().equals(SMScode)) {
+                        action_target.setFill(Color.GREEN);
+                        action_target.setText("MFA Authorised.");
+                    } else {
+                        action_target.setFill(Color.RED);
+                        action_target.setText("Incorrect MFA code.");
+                    }
+
+                } else if (option.equals("Email")) {
+                    // Calling Email Authentication
+                    String emailCode = MFA.sendEmail(example_student.getEmail(), action_target);
+
+                    // Prompt the user to enter the MFA code
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("Email Authentication");
+                    dialog.setHeaderText("Enter the 6-digit code sent to your " + option + ": " + email);
+                    dialog.setContentText("Code:");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent() && result.get().equals(emailCode)) {
+                        action_target.setFill(Color.GREEN);
+                        action_target.setText("MFA Authorised.");
+                    } else {
+                        action_target.setFill(Color.RED);
+                        action_target.setText("Incorrect MFA code.");
+                    }
                 }
+            } else if (platform.equals("2")) {
 
-    //============================================================================================//
-    //======================================= Email section ======================================//
-    //============================================================================================//
+                // Send the MFA code via the selected option
+                if (option.equals("SMS")) {
 
-            } else if (option.equals("Email")) {
-                // Calling Email Authentication
-                String emailCode = MFA.sendEmail(example_student.getEmail(), action_target);
+                    // Calling SMS Authentication
+                    String SMScode = MFA.sendSMS(example_student.getPhoneNumber(), action_target);
 
-                // Prompt the user to enter the MFA code
-                TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Email Authentication");
-                dialog.setHeaderText("Enter the 6-digit code sent to your " + option + ": " + email);
-                dialog.setContentText("Code:");
-                Optional<String> result = dialog.showAndWait();
-                if (result.isPresent() && result.get().equals(emailCode)) {
-                    action_target.setFill(Color.GREEN);
-                    action_target.setText("MFA Authorised.");
-                } else {
-                    action_target.setFill(Color.RED);
-                    action_target.setText("Incorrect MFA code.");
+                    // Prompt the user to enter the MFA code
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("SMS Authentication");
+                    dialog.setHeaderText("Enter the 6-digit code sent to your " + option + ": " + phoneNumber);
+                    dialog.setContentText("Code:");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent() && result.get().equals(SMScode)) {
+                        action_target.setFill(Color.GREEN);
+                        action_target.setText("MFA Authorised.");
+                    } else {
+                        action_target.setFill(Color.RED);
+                        action_target.setText("Incorrect MFA code.");
+                    }
+
+                } else if (option.equals("Email")) {
+                    // Calling Email Authentication
+                    String emailCode = MFA.sendEmail(example_student.getEmail(), action_target);
+
+                    // Prompt the user to enter the MFA code
+                    TextInputDialog dialog = new TextInputDialog();
+                    dialog.setTitle("Email Authentication");
+                    dialog.setHeaderText("Enter the 6-digit code sent to your " + option + ": " + email);
+                    dialog.setContentText("Code:");
+                    Optional<String> result = dialog.showAndWait();
+                    if (result.isPresent() && result.get().equals(emailCode)) {
+                        action_target.setFill(Color.GREEN);
+                        action_target.setText("MFA Authorised.");
+                    } else {
+                        action_target.setFill(Color.RED);
+                        action_target.setText("Incorrect MFA code.");
+                    }
                 }
+            } else {
+                action_target.setFill(Color.RED);
+                action_target.setText("Please type 1 or 2 for a selected platform");
             }
+
+
 
         } else {
             action_target.setFill(Color.RED);
@@ -117,4 +165,5 @@ public class LoginService {
         email.setText("");
         password.setText("");
     }
+
 }

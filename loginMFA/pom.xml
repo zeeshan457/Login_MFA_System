@@ -15,6 +15,7 @@
     </properties>
 
     <dependencies>
+
 <!--    Twillo    -->
         <dependency>
             <groupId>com.twilio.sdk</groupId>
@@ -29,6 +30,12 @@
             <version>1.5</version>
         </dependency>
 
+<!--   Gluon for web auth     -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>11</version>
+        </dependency>
 
 <!--    JavaMail    -->
         <dependency>
@@ -67,7 +74,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>RELEASE</version>
+            <version>7.6.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -80,6 +87,20 @@
 
     <build>
         <plugins>
+
+    <!--     PIT plugin       -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.7.6</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-testng-plugin</artifactId>
+                        <version>0.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
